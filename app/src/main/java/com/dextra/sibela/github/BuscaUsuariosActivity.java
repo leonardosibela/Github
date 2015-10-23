@@ -4,10 +4,15 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import com.dextra.sibela.github.adapter.UsuarioAdapter;
 import com.dextra.sibela.github.bean.GithubUser;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,8 +30,11 @@ import java.util.List;
 
 public class BuscaUsuariosActivity extends AppCompatActivity {
 
-    Button btnPesquisar;
-    EditText txtUsername;
+    private Button btnPesquisar;
+    private EditText txtUsername;
+    private ListView lsvUsuarios;
+
+    private UsuarioAdapter usuarioAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +43,7 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
 
         btnPesquisar = (Button) findViewById(R.id.btnPesquisar);
         txtUsername = (EditText) findViewById(R.id.txtUsername);
+        lsvUsuarios = (ListView) findViewById(R.id.lsvUsuarios);
 
         btnPesquisar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,16 +61,22 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
     public class GetUsersTask extends AsyncTask<String, Integer, String> {
 
         private String readStream(InputStream in) {
+
             BufferedReader reader = null;
             StringBuffer response = new StringBuffer();
+
             try {
+
                 reader = new BufferedReader(new InputStreamReader(in));
                 String line = "";
+
                 while ((line = reader.readLine()) != null) {
                     response.append(line);
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
+
             } finally {
                 if (reader != null) {
                     try {
@@ -81,7 +96,8 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
             String response = "";
 
             String urlPrefix = "https://api.github.com/search/users?q=";
-            String login = (String) params[0];
+            String login = ((String) params[0]).trim();
+
             String urlSulfix = "%20type:users";
 
             String strUrl = urlPrefix + login + urlSulfix;
@@ -93,8 +109,6 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
 
                 response = readStream(urlConnection.getInputStream());
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -104,32 +118,48 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            super.onPostExecute(result);
+            carregarListView(result);
         }
+    }
 
-        private List<GithubUser> jsonToList(String strJsonArray) {
+    private void carregarListView(String result) {
 
-            try {
+        if("".equals(result)) {
+            Toast.makeText(getBaseContext(), "Nenhum usuário encontrado", Toast.LENGTH_LONG).show();
 
-                JSONArray jsonArray = new JSONArray(strJsonArray);
-                List<GithubUser> githubUsers = new ArrayList<>();
+        } else {
 
-                for(int i = 0; i < jsonArray.length(); i++) {
+            List<GithubUser> githubUsers = strJsonToList(result);
 
-                    String strGithubUser = jsonArray.get(i).toString();
-                    JSONObject githubUser = new JSONObject(strGithubUser);
+            this.usuarioAdapter = new UsuarioAdapter(this, githubUsers);
+            lsvUsuarios.setAdapter(usuarioAdapter);
+        }
+    }
 
-                    // githubUsers.add(githubUser);
+    private List<GithubUser> strJsonToList(String strJsonArray) {
 
-                }
+        Gson gson = new Gson();
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+        List<GithubUser> githubUsers = new ArrayList<>();
+
+        try {
+
+            JSONObject jsonGithubUsers = new JSONObject(strJsonArray);
+
+            JSONArray jsonArrayGitUsers = new JSONArray(jsonGithubUsers.get("items").toString());
+
+            for(int i = 0; i < jsonArrayGitUsers.length(); i++) {
+
+                String strGithubUser = jsonArrayGitUsers.get(i).toString();
+                JSONObject githubUser = new JSONObject(strGithubUser);
+
+                githubUsers.add(gson.fromJson(githubUser.toString(), GithubUser.class));
             }
 
-
-            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
+        return githubUsers;
     }
 }

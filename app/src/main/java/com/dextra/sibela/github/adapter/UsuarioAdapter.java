@@ -56,24 +56,11 @@ public class UsuarioAdapter extends BaseAdapter {
 
         View view = activity.getLayoutInflater().inflate(R.layout.adapter_usuario, null);
 
-        try {
+        GithubUser usuario = githubUsers.get(position);
 
-            GithubUser usuario = githubUsers.get(position);
+        TextView txtNomeUsuario = (TextView) view.findViewById(R.id.txtNomeUsuario);
 
-            TextView txtNomeUsuario = (TextView) view.findViewById(R.id.txtNomeUsuario);
-            ImageView imgAvatar = (ImageView) view.findViewById(R.id.imgAvatar);
-
-            txtNomeUsuario.setText(usuario.getLogin());
-
-            URL avatar_url = new URL(usuario.getAvatar_url());
-            Bitmap avatar = BitmapFactory.decodeStream(avatar_url.openConnection().getInputStream());
-            imgAvatar.setImageBitmap(avatar);
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        txtNomeUsuario.setText(usuario.getLogin());
 
         return view;
     }
