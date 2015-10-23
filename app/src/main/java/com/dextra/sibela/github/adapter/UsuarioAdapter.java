@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dextra.sibela.github.R;
+import com.dextra.sibela.github.bean.GithubUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,46 +19,36 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public class UsuarioAdapter extends BaseAdapter {
 
-    private JSONArray jsonUsuarios;
+    private List<GithubUser> githubUsers;
     private Activity activity;
 
-    public UsuarioAdapter(Activity activity, JSONArray jsonUsuarios) {
+    public UsuarioAdapter(Activity activity, List<GithubUser> githubUsers) {
 
-        this.jsonUsuarios = jsonUsuarios;
+        this.githubUsers = githubUsers;
         this.activity = activity;
 
     }
 
     @Override
     public int getCount() {
-        return jsonUsuarios.length();
+        return githubUsers.size();
     }
 
     @Override
     public Object getItem(int position) {
-        try {
-            return jsonUsuarios.get(position);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
-        return null;
+        return githubUsers.get(position);
+
     }
 
     @Override
     public long getItemId(int position) {
 
-        try {
-            JSONObject usuario = (JSONObject) jsonUsuarios.get(position);
-            return usuario.getLong("id");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return 0;
+        return Long.parseLong(githubUsers.get(position).getId());
     }
 
     @Override
@@ -67,19 +58,17 @@ public class UsuarioAdapter extends BaseAdapter {
 
         try {
 
-            JSONObject usuario = (JSONObject) jsonUsuarios.get(position);
+            GithubUser usuario = githubUsers.get(position);
 
             TextView txtNomeUsuario = (TextView) view.findViewById(R.id.txtNomeUsuario);
             ImageView imgAvatar = (ImageView) view.findViewById(R.id.imgAvatar);
 
-            txtNomeUsuario.setText(usuario.getString("login"));
+            txtNomeUsuario.setText(usuario.getLogin());
 
-            URL avatar_url = new URL(usuario.getString("avatar_url"));
+            URL avatar_url = new URL(usuario.getAvatar_url());
             Bitmap avatar = BitmapFactory.decodeStream(avatar_url.openConnection().getInputStream());
             imgAvatar.setImageBitmap(avatar);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
