@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Github</string>
+    <string name="title_activity_busca_usuarios">Busca de Usuários</string>
+    <string name="title_activity_busca_repositorios">Busca de Repositórios</string>
+
+    <string name="localizar_usuarios">Localizar Usuários</string>
+    <string name="localizar_repositorios">Localizar Repositórios</string>
+    <string name="nome_usuario">Nome do Usuário</string>
+    <string name="pesquisar">Pesquisar</string>
+    <string name="nome_repositorio">Nome do Repositório</string>
+</resources>
