@@ -142,16 +142,14 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
 
     private void carregarListView(String result) {
 
-        if("".equals(result)) {
+        List<GithubUser> githubUsers = strJsonToList(result);
+
+        if(githubUsers.isEmpty()) {
             Toast.makeText(getBaseContext(), "Nenhum usuário encontrado", Toast.LENGTH_LONG).show();
-
-        } else {
-
-            List<GithubUser> githubUsers = strJsonToList(result);
-
-            this.usuarioAdapter = new UsuarioAdapter(this, githubUsers);
-            lsvUsuarios.setAdapter(usuarioAdapter);
         }
+
+        this.usuarioAdapter = new UsuarioAdapter(this, githubUsers);
+            lsvUsuarios.setAdapter(usuarioAdapter);
     }
 
     private List<GithubUser> strJsonToList(String strJsonArray) {

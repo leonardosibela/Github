@@ -136,16 +136,14 @@ public class BuscaRepositoriosActivity extends AppCompatActivity {
 
     private void carregarListView(String result) {
 
-        if("".equals(result)) {
+        List<String> nomesRepositorios = strJsonToList(result);
+
+        if(nomesRepositorios.isEmpty()) {
             Toast.makeText(getBaseContext(), "Nenhum repositório encontrado", Toast.LENGTH_LONG).show();
-
-        } else {
-
-            List<String> nomesRepositorios = strJsonToList(result);
-
-            lsvRepositorios.setAdapter(new ArrayAdapter(
-                    this, android.R.layout.simple_list_item_1, nomesRepositorios));
         }
+
+        lsvRepositorios.setAdapter(new ArrayAdapter(
+                this, android.R.layout.simple_list_item_1, nomesRepositorios));
     }
 
     private List<String> strJsonToList(String strJsonArray) {
