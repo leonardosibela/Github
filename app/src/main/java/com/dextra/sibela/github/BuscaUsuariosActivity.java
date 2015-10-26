@@ -91,7 +91,7 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
             url.append("https://api.github.com/search/users?q=");
             url.append((String) params[0].trim());
             url.append("%20type:users");
-            
+
             return url.toString();
 
         }
