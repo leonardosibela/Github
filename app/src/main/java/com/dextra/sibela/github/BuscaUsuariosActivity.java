@@ -2,9 +2,11 @@ package com.dextra.sibela.github;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -119,6 +121,7 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
         @Override
         protected void onPostExecute(String result) {
             carregarListView(result);
+            txtUsername.setText("");
             progLoadingUsers.dismiss();
         }
 
