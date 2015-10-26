@@ -60,6 +60,42 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
 
     public class GetUsersTask extends AsyncTask<String, Integer, String> {
 
+        @Override
+        protected String doInBackground(String... params) {
+
+            String response = "";
+            String strUrl = creatUserSearchUrl(params);
+
+            try {
+
+                URL url = new URL(strUrl);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                response = readStream(urlConnection.getInputStream());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            carregarListView(result);
+        }
+
+        private String creatUserSearchUrl(String... params) {
+
+            StringBuffer url = new StringBuffer();
+
+            url.append("https://api.github.com/search/users?q=");
+            url.append((String) params[0].trim());
+            url.append("%20type:users");
+            
+            return url.toString();
+
+        }
+
         private String readStream(InputStream in) {
 
             BufferedReader reader = null;
@@ -88,37 +124,6 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
             }
 
             return response.toString();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            String response = "";
-
-            String urlPrefix = "https://api.github.com/search/users?q=";
-            String login = ((String) params[0]).trim();
-
-            String urlSulfix = "%20type:users";
-
-            String strUrl = urlPrefix + login + urlSulfix;
-
-            try {
-                URL url = new URL(strUrl);
-
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-                response = readStream(urlConnection.getInputStream());
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            carregarListView(result);
         }
     }
 
