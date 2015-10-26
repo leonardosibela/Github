@@ -78,7 +78,6 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
             if(total_count > currentPage * 30) {
 
                 complementarLista = true;
-                termoPesquisa = txtUsername.getText().toString();
                 String urlPesquisa = creatUserSearchUrl(termoPesquisa, complementarLista);
                 new GetUsersTask().execute(urlPesquisa);
             }
