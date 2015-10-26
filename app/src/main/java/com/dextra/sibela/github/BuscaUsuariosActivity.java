@@ -40,6 +40,7 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
 
     private Boolean complementarLista;
     private Integer currentPage = 1;
+    private Integer total_count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +75,15 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
 
         if((firstVisibleItem + visibleItemCount) >= totalItemCount && !"".equals(termoPesquisa)) {
 
-            complementarLista = true;
-            termoPesquisa = txtUsername.getText().toString();
-            String urlPesquisa = creatUserSearchUrl(termoPesquisa, complementarLista);
-            new GetUsersTask().execute(urlPesquisa);
+            if(total_count > currentPage * 30) {
+
+                complementarLista = true;
+                termoPesquisa = txtUsername.getText().toString();
+                String urlPesquisa = creatUserSearchUrl(termoPesquisa, complementarLista);
+                new GetUsersTask().execute(urlPesquisa);
+            }
         }
+
     }
 
     public class GetUsersTask extends AsyncTask<String, Integer, String> {
@@ -170,7 +175,7 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
         List<GithubUser> githubUsers = strJsonToList(result);
 
         if(githubUsers.isEmpty()) {
-            Toast.makeText(getBaseContext(), "Nenhum usuário encontrado", Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "Nenhum usuário encontrado", Toast.LENGTH_SHORT).show();
         }
 
         if(complementarLista) {
@@ -193,6 +198,7 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
         try {
 
             JSONObject jsonGithubUsers = new JSONObject(strJsonArray);
+            total_count = jsonGithubUsers.getInt("total_count");
             JSONArray jsonArrayGitUsers = new JSONArray(jsonGithubUsers.get("items").toString());
 
             for(int i = 0; i < jsonArrayGitUsers.length(); i++) {
