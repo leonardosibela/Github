@@ -1,5 +1,6 @@
 package com.dextra.sibela.github;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -54,6 +55,17 @@ public class BuscaRepositoriosActivity extends AppCompatActivity {
 
     public class GetReposTask extends AsyncTask<String, Integer, String> {
 
+        ProgressDialog progLoadingRepos;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progLoadingRepos = new ProgressDialog(BuscaRepositoriosActivity.this);
+            progLoadingRepos.setMessage("Buscando repositórios...");
+            progLoadingRepos.show();
+
+        }
+
         @Override
         protected String doInBackground(String... params) {
 
@@ -76,6 +88,7 @@ public class BuscaRepositoriosActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             carregarListView(result);
+            progLoadingRepos.dismiss();
         }
 
         private String creatRepoSearchUrl(String... params) {

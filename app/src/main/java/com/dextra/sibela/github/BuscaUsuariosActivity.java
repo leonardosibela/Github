@@ -1,5 +1,6 @@
 package com.dextra.sibela.github;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,6 +61,17 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
 
     public class GetUsersTask extends AsyncTask<String, Integer, String> {
 
+        ProgressDialog progLoadingUsers;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progLoadingUsers = new ProgressDialog(BuscaUsuariosActivity.this);
+            progLoadingUsers.setMessage("Buscando usuários...");
+            progLoadingUsers.show();
+
+        }
+
         @Override
         protected String doInBackground(String... params) {
 
@@ -82,6 +94,7 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             carregarListView(result);
+            progLoadingUsers.dismiss();
         }
 
         private String creatUserSearchUrl(String... params) {
