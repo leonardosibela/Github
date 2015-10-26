@@ -11,7 +11,7 @@
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/lsvRepositorios" />
+        android:id="@android:id/list" />
 
     <TableRow
         android:layout_weight="0"

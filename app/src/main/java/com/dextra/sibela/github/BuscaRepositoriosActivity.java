@@ -1,10 +1,11 @@
 package com.dextra.sibela.github;
 
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,12 +25,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuscaRepositoriosActivity extends AppCompatActivity {
+public class BuscaRepositoriosActivity extends ListActivity implements AbsListView.OnScrollListener {
 
     private Button btnPesquisar;
     private EditText txtRepoName;
     private ListView lsvRepositorios;
 
+    private String termoPesquisa = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,19 +40,31 @@ public class BuscaRepositoriosActivity extends AppCompatActivity {
 
         btnPesquisar = (Button) findViewById(R.id.btnPesquisar);
         txtRepoName = (EditText) findViewById(R.id.txtRepoName);
-        lsvRepositorios = (ListView) findViewById(R.id.lsvRepositorios);
+        lsvRepositorios = (ListView) findViewById(android.R.id.list);
+
+        getListView().setOnScrollListener(this);
 
         btnPesquisar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String repoName = txtRepoName.getText().toString();
-
-                new GetReposTask().execute(repoName);
-
+                termoPesquisa = txtRepoName.getText().toString();
+                new GetReposTask().execute(termoPesquisa);
             }
         });
+    }
 
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) { }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        if((firstVisibleItem + visibleItemCount) >= totalItemCount && !"".equals(termoPesquisa)) {
+
+           // TODO: Carregar mais elementos
+
+        }
     }
 
     public class GetReposTask extends AsyncTask<String, Integer, String> {
@@ -63,7 +77,6 @@ public class BuscaRepositoriosActivity extends AppCompatActivity {
             progLoadingRepos = new ProgressDialog(BuscaRepositoriosActivity.this);
             progLoadingRepos.setMessage("Buscando repositórios...");
             progLoadingRepos.show();
-
         }
 
         @Override
@@ -100,7 +113,6 @@ public class BuscaRepositoriosActivity extends AppCompatActivity {
             url.append("%20in:name");
 
             return url.toString();
-
         }
 
         private String readStream(InputStream in) {
@@ -153,7 +165,6 @@ public class BuscaRepositoriosActivity extends AppCompatActivity {
         try {
 
             JSONObject jsonResponse = new JSONObject(strJsonArray);
-
             JSONArray jsonRepositories = new JSONArray(jsonResponse.get("items").toString());
 
             for(int i = 0; i < jsonRepositories.length(); i++) {
@@ -167,8 +178,6 @@ public class BuscaRepositoriosActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return nomesRepositorios;
     }
-
 }

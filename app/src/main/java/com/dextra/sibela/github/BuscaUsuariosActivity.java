@@ -1,11 +1,11 @@
 package com.dextra.sibela.github;
 
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.URLUtil;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -24,16 +24,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuscaUsuariosActivity extends AppCompatActivity {
+public class BuscaUsuariosActivity extends ListActivity implements AbsListView.OnScrollListener {
 
     private Button btnPesquisar;
     private EditText txtUsername;
     private ListView lsvUsuarios;
+
+    private String termoPesquisa = "";
 
     private UsuarioAdapter usuarioAdapter;
 
@@ -44,19 +45,32 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
 
         btnPesquisar = (Button) findViewById(R.id.btnPesquisar);
         txtUsername = (EditText) findViewById(R.id.txtUsername);
-        lsvUsuarios = (ListView) findViewById(R.id.lsvUsuarios);
+        lsvUsuarios = (ListView) findViewById(android.R.id.list);
+
+        getListView().setOnScrollListener(this);
 
         btnPesquisar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String nomeUsuario = txtUsername.getText().toString();
-
-                new GetUsersTask().execute(nomeUsuario);
+                termoPesquisa = txtUsername.getText().toString();
+                new GetUsersTask().execute(termoPesquisa);
 
             }
         });
 
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) { }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        if((firstVisibleItem + visibleItemCount) >= totalItemCount && !"".equals(termoPesquisa)) {
+
+            // TODO: Carregar mais elementos
+        }
     }
 
     public class GetUsersTask extends AsyncTask<String, Integer, String> {
@@ -69,7 +83,6 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
             progLoadingUsers = new ProgressDialog(BuscaUsuariosActivity.this);
             progLoadingUsers.setMessage("Buscando usuários...");
             progLoadingUsers.show();
-
         }
 
         @Override
@@ -106,7 +119,6 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
             url.append("%20type:users");
 
             return url.toString();
-
         }
 
         private String readStream(InputStream in) {
@@ -135,7 +147,6 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
                     }
                 }
             }
-
             return response.toString();
         }
     }
@@ -161,7 +172,6 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
         try {
 
             JSONObject jsonGithubUsers = new JSONObject(strJsonArray);
-
             JSONArray jsonArrayGitUsers = new JSONArray(jsonGithubUsers.get("items").toString());
 
             for(int i = 0; i < jsonArrayGitUsers.length(); i++) {
@@ -175,7 +185,6 @@ public class BuscaUsuariosActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return githubUsers;
     }
 }
