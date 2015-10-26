@@ -64,4 +64,11 @@ public class UsuarioAdapter extends BaseAdapter {
 
         return view;
     }
+
+    public void addData(List<GithubUser> githubUsers) {
+
+        this.githubUsers.addAll(githubUsers);
+        notifyDataSetChanged();
+
+    }
 }

@@ -38,6 +38,9 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
 
     private UsuarioAdapter usuarioAdapter;
 
+    private Boolean complementarLista;
+    private Integer currentPage = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,12 +56,14 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
             @Override
             public void onClick(View v) {
 
-                termoPesquisa = txtUsername.getText().toString();
-                new GetUsersTask().execute(termoPesquisa);
+                complementarLista = false;
+                currentPage = 1;
 
+                termoPesquisa = txtUsername.getText().toString();
+                String urlPesquisa = creatUserSearchUrl(termoPesquisa, complementarLista);
+                new GetUsersTask().execute(urlPesquisa);
             }
         });
-
     }
 
     @Override
@@ -69,7 +74,10 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
 
         if((firstVisibleItem + visibleItemCount) >= totalItemCount && !"".equals(termoPesquisa)) {
 
-            // TODO: Carregar mais elementos
+            complementarLista = true;
+            termoPesquisa = txtUsername.getText().toString();
+            String urlPesquisa = creatUserSearchUrl(termoPesquisa, complementarLista);
+            new GetUsersTask().execute(urlPesquisa);
         }
     }
 
@@ -89,7 +97,7 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
         protected String doInBackground(String... params) {
 
             String response = "";
-            String strUrl = creatUserSearchUrl(params);
+            String strUrl = params[0];
 
             try {
 
@@ -108,17 +116,6 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
         protected void onPostExecute(String result) {
             carregarListView(result);
             progLoadingUsers.dismiss();
-        }
-
-        private String creatUserSearchUrl(String... params) {
-
-            StringBuffer url = new StringBuffer();
-
-            url.append("https://api.github.com/search/users?q=");
-            url.append((String) params[0].trim());
-            url.append("%20type:users");
-
-            return url.toString();
         }
 
         private String readStream(InputStream in) {
@@ -151,6 +148,23 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
         }
     }
 
+    private String creatUserSearchUrl(String termoPesquisa, Boolean complementarLista) {
+
+        StringBuffer url = new StringBuffer();
+
+        url.append("https://api.github.com/search/users?q=");
+        url.append(termoPesquisa.trim());
+        url.append("%20type:users");
+
+        if(complementarLista) {
+            url.append("&page=" + ++currentPage);
+        }
+
+        return url.toString();
+    }
+
+
+
     private void carregarListView(String result) {
 
         List<GithubUser> githubUsers = strJsonToList(result);
@@ -159,8 +173,15 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
             Toast.makeText(getBaseContext(), "Nenhum usuário encontrado", Toast.LENGTH_LONG).show();
         }
 
-        this.usuarioAdapter = new UsuarioAdapter(this, githubUsers);
+        if(complementarLista) {
+
+            usuarioAdapter.addData(githubUsers);
+
+        } else {
+
+            usuarioAdapter = new UsuarioAdapter(this, githubUsers);
             lsvUsuarios.setAdapter(usuarioAdapter);
+        }
     }
 
     private List<GithubUser> strJsonToList(String strJsonArray) {
