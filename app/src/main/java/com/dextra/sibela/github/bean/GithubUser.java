@@ -8,20 +8,27 @@ public class GithubUser implements Parcelable {
     private String id;
     private String login;
     private String avatar_url;
+    private String type;
+    private Double score;
 
-    public GithubUser(Parcel in) {
-
+    protected GithubUser(Parcel in) {
         id = in.readString();
         login = in.readString();
         avatar_url = in.readString();
+        type = in.readString();
     }
 
-    public GithubUser() {
+    public static final Creator<GithubUser> CREATOR = new Creator<GithubUser>() {
+        @Override
+        public GithubUser createFromParcel(Parcel in) {
+            return new GithubUser(in);
+        }
 
-        id = "";
-        login = "";
-        avatar_url = "";
-    }
+        @Override
+        public GithubUser[] newArray(int size) {
+            return new GithubUser[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -47,18 +54,21 @@ public class GithubUser implements Parcelable {
         this.avatar_url = avatar_url;
     }
 
-    public static final Creator<GithubUser> CREATOR = new Creator<GithubUser>() {
+    public String getType() {
+        return type;
+    }
 
-        @Override
-        public GithubUser createFromParcel(Parcel in) {
-            return new GithubUser(in);
-        }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-        @Override
-        public GithubUser[] newArray(int size) {
-            return new GithubUser[size];
-        }
-    };
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
 
     @Override
     public int describeContents() {
@@ -70,5 +80,6 @@ public class GithubUser implements Parcelable {
         dest.writeString(id);
         dest.writeString(login);
         dest.writeString(avatar_url);
+        dest.writeString(type);
     }
 }

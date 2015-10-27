@@ -12,6 +12,7 @@ public class DadosUsuarioActivity extends AppCompatActivity {
 
     private ImageView imgFullAvatar;
     private TextView login;
+    private TextView tipo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,5 +27,8 @@ public class DadosUsuarioActivity extends AppCompatActivity {
 
         login = (TextView) findViewById(R.id.login);
         login.setText(usuario.getLogin());
+
+        tipo = (TextView) findViewById(R.id.tipo);
+        tipo.setText(usuario.getType());
     }
 }

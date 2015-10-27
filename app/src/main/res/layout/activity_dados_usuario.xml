@@ -27,13 +27,32 @@
         android:layout_below="@+id/imgFullAvatar"
         android:text="@string/login_colon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp" />
 
     <TextView
         android:id="@+id/login"
         android:textSize="30dp"
         android:layout_toRightOf="@+id/lblLogin"
         android:layout_below="@+id/imgFullAvatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:id="@+id/lbltipo"
+        android:textSize="30dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/lblLogin"
+        android:text="@string/tipo_colon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tipo"
+        android:textSize="30dp"
+        android:layout_toRightOf="@+id/lbltipo"
+        android:layout_below="@+id/lblLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

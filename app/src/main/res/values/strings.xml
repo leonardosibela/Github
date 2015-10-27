@@ -9,4 +9,5 @@
     <string name="pesquisar">Pesquisar</string>
     <string name="nome_repositorio">Nome do Repositório</string>
     <string name="login_colon">Login:</string>
+    <string name="tipo_colon">Tipo:</string>
 </resources>
