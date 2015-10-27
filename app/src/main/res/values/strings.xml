@@ -8,4 +8,5 @@
     <string name="nome_usuario">Nome do Usuário</string>
     <string name="pesquisar">Pesquisar</string>
     <string name="nome_repositorio">Nome do Repositório</string>
+    <string name="login_colon">Login:</string>
 </resources>

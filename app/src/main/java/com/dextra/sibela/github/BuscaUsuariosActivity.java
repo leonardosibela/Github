@@ -2,12 +2,12 @@ package com.dextra.sibela.github;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -35,6 +35,8 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
     private Button btnPesquisar;
     private EditText txtUsername;
     private ListView lsvUsuarios;
+
+    private GithubUser usuarioSelecionado;
 
     private String termoPesquisa = "";
 
@@ -67,6 +69,17 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
                 new GetUsersTask().execute(urlPesquisa);
             }
         });
+
+        lsvUsuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                usuarioSelecionado = (GithubUser) lsvUsuarios.getItemAtPosition(position);
+                Intent dadosUsuarios = new Intent(getBaseContext(), DadosUsuarioActivity.class);
+                dadosUsuarios.putExtra("usuario", usuarioSelecionado);
+                startActivity(dadosUsuarios);
+            }
+        });
     }
 
     @Override
@@ -84,7 +97,6 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
                 new GetUsersTask().execute(urlPesquisa);
             }
         }
-
     }
 
     public class GetUsersTask extends AsyncTask<String, Integer, String> {
@@ -169,8 +181,6 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
 
         return url.toString();
     }
-
-
 
     private void carregarListView(String result) {
 

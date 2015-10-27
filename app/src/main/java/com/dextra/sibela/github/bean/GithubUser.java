@@ -1,11 +1,27 @@
 package com.dextra.sibela.github.bean;
 
-public class GithubUser {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class GithubUser implements Parcelable {
 
     private String id;
     private String login;
     private String avatar_url;
 
+    public GithubUser(Parcel in) {
+
+        id = in.readString();
+        login = in.readString();
+        avatar_url = in.readString();
+    }
+
+    public GithubUser() {
+
+        id = "";
+        login = "";
+        avatar_url = "";
+    }
 
     public String getId() {
         return id;
@@ -29,5 +45,30 @@ public class GithubUser {
 
     public void setAvatar_url(String avatar_url) {
         this.avatar_url = avatar_url;
+    }
+
+    public static final Creator<GithubUser> CREATOR = new Creator<GithubUser>() {
+
+        @Override
+        public GithubUser createFromParcel(Parcel in) {
+            return new GithubUser(in);
+        }
+
+        @Override
+        public GithubUser[] newArray(int size) {
+            return new GithubUser[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(login);
+        dest.writeString(avatar_url);
     }
 }
