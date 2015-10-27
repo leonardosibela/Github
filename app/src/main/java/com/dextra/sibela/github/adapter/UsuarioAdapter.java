@@ -71,7 +71,7 @@ public class UsuarioAdapter extends BaseAdapter {
         txtNomeUsuario.setText(usuario.getLogin());
 
         ImageView imgAvatar = (ImageView) view.findViewById(R.id.imgAvatar);
-        UrlImageViewHelper.setUrlDrawable(imgAvatar, usuario.getAvatar_url());
+        UrlImageViewHelper.setUrlDrawable(imgAvatar, usuario.getAvatar_url(), R.drawable.icon_user_default);
 
         return view;
     }
