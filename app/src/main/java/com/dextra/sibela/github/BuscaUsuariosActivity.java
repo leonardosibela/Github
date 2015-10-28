@@ -39,12 +39,17 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
     private GithubUser usuarioSelecionado;
 
     private String termoPesquisa = "";
+    private final String TERMO_PESQUISA_KEY = "TERMO_PESQUISA";
 
     private UsuarioAdapter usuarioAdapter;
+    ArrayList<GithubUser> githubUsers;
+    private final String USERS_KEY = "GITHUB_USERS";
 
     private Boolean complementarLista;
     private Integer currentPage = 1;
+    private final String CURRENT_PAGE_KEY = "CURRENT_PAGE";
     private Integer total_count;
+    private final String TOTAL_COUNT_KEY = "TOTAL_COUNT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,10 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
         btnPesquisar = (Button) findViewById(R.id.btnPesquisar);
         txtUsername = (EditText) findViewById(R.id.txtUsername);
         lsvUsuarios = (ListView) findViewById(android.R.id.list);
+
+        if(savedInstanceState != null) {
+            restoreData(savedInstanceState);
+        }
 
         getListView().setOnScrollListener(this);
 
@@ -80,6 +89,35 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
                 startActivity(dadosUsuarios);
             }
         });
+    }
+
+    private void restoreData(Bundle savedInstanceState) {
+
+        if(savedInstanceState.containsKey(USERS_KEY) &&
+                savedInstanceState.containsKey(TERMO_PESQUISA_KEY) &&
+                savedInstanceState.containsKey(CURRENT_PAGE_KEY) &&
+                savedInstanceState.containsKey(TOTAL_COUNT_KEY)) {
+
+            termoPesquisa = savedInstanceState.getString(TERMO_PESQUISA_KEY);
+            currentPage = savedInstanceState.getInt(CURRENT_PAGE_KEY);
+            total_count = savedInstanceState.getInt(TOTAL_COUNT_KEY);
+
+            githubUsers = savedInstanceState.getParcelableArrayList(USERS_KEY);
+
+            usuarioAdapter = new UsuarioAdapter(this, githubUsers);
+            lsvUsuarios.setAdapter(usuarioAdapter);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        outState.putParcelableArrayList(USERS_KEY, githubUsers);
+        outState.putString(TERMO_PESQUISA_KEY, termoPesquisa);
+        outState.putInt(CURRENT_PAGE_KEY, currentPage);
+        outState.putInt(TOTAL_COUNT_KEY, total_count);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -184,7 +222,7 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
 
     private void carregarListView(String result) {
 
-        List<GithubUser> githubUsers = strJsonToList(result);
+        githubUsers = strJsonToList(result);
 
         if(githubUsers.isEmpty()) {
             Toast.makeText(getBaseContext(), "Nenhum usuário encontrado", Toast.LENGTH_SHORT).show();
@@ -201,11 +239,11 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
         }
     }
 
-    private List<GithubUser> strJsonToList(String strJsonArray) {
+    private ArrayList<GithubUser> strJsonToList(String strJsonArray) {
 
         Gson gson = new Gson();
 
-        List<GithubUser> githubUsers = new ArrayList<>();
+        ArrayList<GithubUser> githubUsers = new ArrayList<>();
 
         try {
 

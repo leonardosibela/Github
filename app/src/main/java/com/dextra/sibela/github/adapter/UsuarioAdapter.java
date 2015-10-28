@@ -11,14 +11,15 @@ import com.dextra.sibela.github.R;
 import com.dextra.sibela.github.bean.GithubUser;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioAdapter extends BaseAdapter {
 
-    private List<GithubUser> githubUsers;
+    private ArrayList<GithubUser> githubUsers;
     private Activity activity;
 
-    public UsuarioAdapter(Activity activity, List<GithubUser> githubUsers) {
+    public UsuarioAdapter(Activity activity, ArrayList<GithubUser> githubUsers) {
 
         this.githubUsers = githubUsers;
         this.activity = activity;

@@ -19,6 +19,7 @@ public class GithubUser implements Parcelable {
     }
 
     public static final Creator<GithubUser> CREATOR = new Creator<GithubUser>() {
+
         @Override
         public GithubUser createFromParcel(Parcel in) {
             return new GithubUser(in);
