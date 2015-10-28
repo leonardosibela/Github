@@ -32,10 +32,16 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
     private ListView lsvRepositorios;
 
     private String termoPesquisa = "";
+    private final String TERMO_PESQUISA_KEY = "TERMO_PESQUISA";
 
-    private Boolean complementarLista;
+    ArrayList<String> nomesRepositorios;
+    private final String REPOS_KEY = "GITHUB_REPOS";
+
+    private Boolean complementarLista = false;
     private Integer currentPage = 1;
+    private final String CURRENT_PAGE_KEY = "CURRENT_PAGE";
     private Integer total_count;
+    private final String TOTAL_COUNT_KEY = "TOTAL_COUNT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +51,10 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
         btnPesquisar = (Button) findViewById(R.id.btnPesquisar);
         txtRepoName = (EditText) findViewById(R.id.txtRepoName);
         lsvRepositorios = (ListView) findViewById(android.R.id.list);
+
+        if(savedInstanceState != null) {
+            restoreData(savedInstanceState);
+        }
 
         getListView().setOnScrollListener(this);
 
@@ -60,6 +70,35 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
                 new GetReposTask().execute(urlPesquisa);
             }
         });
+    }
+
+    private void restoreData(Bundle savedInstanceState) {
+
+        if(savedInstanceState.containsKey(REPOS_KEY) &&
+                savedInstanceState.containsKey(TERMO_PESQUISA_KEY) &&
+                savedInstanceState.containsKey(CURRENT_PAGE_KEY) &&
+                savedInstanceState.containsKey(TOTAL_COUNT_KEY)) {
+
+            termoPesquisa = savedInstanceState.getString(TERMO_PESQUISA_KEY);
+            currentPage = savedInstanceState.getInt(CURRENT_PAGE_KEY);
+            total_count = savedInstanceState.getInt(TOTAL_COUNT_KEY);
+            nomesRepositorios = savedInstanceState.getStringArrayList(REPOS_KEY);
+
+            lsvRepositorios.setAdapter(new ArrayAdapter(
+                    this, android.R.layout.simple_list_item_1, nomesRepositorios));
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        outState.putStringArrayList(REPOS_KEY, nomesRepositorios);
+        outState.putString(TERMO_PESQUISA_KEY, termoPesquisa);
+        outState.putInt(CURRENT_PAGE_KEY, currentPage);
+        outState.putInt(TOTAL_COUNT_KEY, total_count);
+
+        super.onSaveInstanceState(outState);
     }
 
     private String creatRepoSearchUrl(String termoPesquisa, Boolean complementarLista) {
@@ -168,7 +207,7 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
 
     private void carregarListView(String result) {
 
-        List<String> nomesRepositorios = strJsonToList(result);
+        nomesRepositorios = strJsonToList(result);
 
         if(nomesRepositorios.isEmpty()) {
             Toast.makeText(getBaseContext(), "Nenhum repositório encontrado", Toast.LENGTH_LONG).show();
@@ -178,9 +217,9 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
                 this, android.R.layout.simple_list_item_1, nomesRepositorios));
     }
 
-    private List<String> strJsonToList(String strJsonArray) {
+    private ArrayList<String> strJsonToList(String strJsonArray) {
 
-        List<String> nomesRepositorios = new ArrayList<>();
+        ArrayList<String> nomesRepositorios = new ArrayList<>();
 
         try {
 
