@@ -33,6 +33,10 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
 
     private String termoPesquisa = "";
 
+    private Boolean complementarLista;
+    private Integer currentPage = 1;
+    private Integer total_count;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,10 +52,29 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
             @Override
             public void onClick(View v) {
 
+                complementarLista = false;
+                currentPage = 1;
+
                 termoPesquisa = txtRepoName.getText().toString();
-                new GetReposTask().execute(termoPesquisa);
+                String urlPesquisa = creatRepoSearchUrl(termoPesquisa, complementarLista);
+                new GetReposTask().execute(urlPesquisa);
             }
         });
+    }
+
+    private String creatRepoSearchUrl(String termoPesquisa, Boolean complementarLista) {
+
+        StringBuffer url = new StringBuffer();
+
+        url.append("https://api.github.com/search/repositories?q=");
+        url.append(termoPesquisa.trim());
+        url.append("%20in:name");
+
+        if(complementarLista) {
+            url.append("&page=" + ++currentPage);
+        }
+
+        return url.toString();
     }
 
     @Override
@@ -62,7 +85,15 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
 
         if((firstVisibleItem + visibleItemCount) >= totalItemCount && !"".equals(termoPesquisa)) {
 
-           // TODO: Carregar mais elementos
+            if(total_count > currentPage * 30) {
+
+                complementarLista = true;
+
+                String urlPesquisa = creatRepoSearchUrl(termoPesquisa, complementarLista);
+                new GetReposTask().execute(urlPesquisa);
+
+            }
+
 
         }
     }
@@ -83,7 +114,7 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
         protected String doInBackground(String... params) {
 
             String response = "";
-            String strUrl = creatRepoSearchUrl(params);
+            String strUrl = params[0];
 
             try {
 
@@ -102,17 +133,6 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
         protected void onPostExecute(String result) {
             carregarListView(result);
             progLoadingRepos.dismiss();
-        }
-
-        private String creatRepoSearchUrl(String... params) {
-
-            StringBuffer url = new StringBuffer();
-
-            url.append("https://api.github.com/search/repositories?q=");
-            url.append((String) params[0].trim());
-            url.append("%20in:name");
-
-            return url.toString();
         }
 
         private String readStream(InputStream in) {
@@ -165,6 +185,7 @@ public class BuscaRepositoriosActivity extends ListActivity implements AbsListVi
         try {
 
             JSONObject jsonResponse = new JSONObject(strJsonArray);
+            total_count = jsonResponse.getInt("total_count");
             JSONArray jsonRepositories = new JSONArray(jsonResponse.get("items").toString());
 
             for(int i = 0; i < jsonRepositories.length(); i++) {
