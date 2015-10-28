@@ -210,7 +210,7 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
 
         url.append("https://api.github.com/search/users?q=");
         url.append(termoPesquisa.trim());
-        url.append("%20type:users");
+        url.append("%20in:login");
 
         if(complementarLista) {
             url.append("&page=" + ++currentPage);
@@ -225,16 +225,17 @@ public class BuscaUsuariosActivity extends ListActivity implements AbsListView.O
 
         if(githubUsers.isEmpty()) {
             Toast.makeText(getBaseContext(), "Nenhum usuário encontrado", Toast.LENGTH_SHORT).show();
-        }
-
-        if(complementarLista) {
-
-            usuarioAdapter.addData(githubUsers);
-
         } else {
 
-            usuarioAdapter = new UsuarioAdapter(this, githubUsers);
-            lsvUsuarios.setAdapter(usuarioAdapter);
+            if(complementarLista) {
+
+                usuarioAdapter.addData(githubUsers);
+
+            } else {
+
+                usuarioAdapter = new UsuarioAdapter(this, githubUsers);
+                lsvUsuarios.setAdapter(usuarioAdapter);
+            }
         }
     }
 

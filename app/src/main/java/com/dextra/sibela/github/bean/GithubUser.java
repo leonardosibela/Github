@@ -16,10 +16,10 @@ public class GithubUser implements Parcelable {
         login = in.readString();
         avatar_url = in.readString();
         type = in.readString();
+        score = in.readDouble();
     }
 
     public static final Creator<GithubUser> CREATOR = new Creator<GithubUser>() {
-
         @Override
         public GithubUser createFromParcel(Parcel in) {
             return new GithubUser(in);
@@ -82,5 +82,6 @@ public class GithubUser implements Parcelable {
         dest.writeString(login);
         dest.writeString(avatar_url);
         dest.writeString(type);
+        dest.writeDouble(score);
     }
 }

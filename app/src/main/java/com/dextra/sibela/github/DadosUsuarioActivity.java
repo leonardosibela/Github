@@ -3,6 +3,7 @@ package com.dextra.sibela.github;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.dextra.sibela.github.bean.GithubUser;
@@ -13,6 +14,7 @@ public class DadosUsuarioActivity extends AppCompatActivity {
     private ImageView imgFullAvatar;
     private TextView login;
     private TextView tipo;
+    private SeekBar score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,5 +32,8 @@ public class DadosUsuarioActivity extends AppCompatActivity {
 
         tipo = (TextView) findViewById(R.id.tipo);
         tipo.setText(usuario.getType());
+
+        score = (SeekBar) findViewById(R.id.skbScore);
+        score.setProgress(usuario.getScore().intValue());
     }
 }
