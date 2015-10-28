@@ -1,7 +1,11 @@
 package com.dextra.sibela.github;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -14,7 +18,8 @@ public class DadosUsuarioActivity extends AppCompatActivity {
     private ImageView imgFullAvatar;
     private TextView login;
     private TextView tipo;
-    private SeekBar score;
+    private SeekBar skbScore;
+    private TextView edtScore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +38,17 @@ public class DadosUsuarioActivity extends AppCompatActivity {
         tipo = (TextView) findViewById(R.id.tipo);
         tipo.setText(usuario.getType());
 
-        score = (SeekBar) findViewById(R.id.skbScore);
-        score.setProgress(usuario.getScore().intValue());
+        skbScore = (SeekBar) findViewById(R.id.skbScore);
+        skbScore.setProgress(usuario.getScore().intValue());
+
+        edtScore = (TextView) findViewById(R.id.edtScore);
+        edtScore.setText(usuario.getScore().toString());
+
+        skbScore.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
     }
 }
